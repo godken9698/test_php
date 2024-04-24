@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: thevu123
+      MYSQL_DATABASE: dtest
+      MYSQL_USER: name_test
+      MYSQL_PASSWORD: thevu123
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: name_test
+      WORDPRESS_DB_PASSWORD: thevu123
+      WORDPRESS_DB_NAME: dtest
+
+  acorn:
+    build:
+      context: ./acorn
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    restart: always
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: name_test
+      MYSQL_PASSWORD: thevu123
+      MYSQL_DB: dtest
+
+volumes:
+  db_data:
